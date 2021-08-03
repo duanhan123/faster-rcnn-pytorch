@@ -76,7 +76,8 @@ def fit_ont_epoch(net,epoch,epoch_size,epoch_size_val,gen,genval,Epoch,cuda):
     print('Total Loss: %.4f || Val Loss: %.4f ' % (total_loss/(epoch_size+1),val_toal_loss/(epoch_size_val+1)))
     print('Saving state, iter:', str(epoch+1))
     torch.save(model.state_dict(), 'logs/Epoch%d-Total_Loss%.4f-Val_Loss%.4f.pth'%((epoch+1),total_loss/(epoch_size+1),val_toal_loss/(epoch_size_val+1)))
-    
+    # torch.save(model, 'logs/m-Epoch%d-Total_Loss%.4f-Val_Loss%.4f.pth'%((epoch+1),total_loss/(epoch_size+1),val_toal_loss/(epoch_size_val+1)))
+
 if __name__ == "__main__":
     #-------------------------------#
     #   是否使用Cuda
@@ -87,24 +88,28 @@ if __name__ == "__main__":
     #   训练之前一定要修改NUM_CLASSES
     #   修改成所需要区分的类的个数。
     #----------------------------------------------------#
-    NUM_CLASSES = 20
+    NUM_CLASSES = 6
     #-------------------------------------------------------------------------------------#
     #   input_shape是输入图片的大小，默认为800,800,3，随着输入图片的增大，占用显存会增大
     #   视频上为600,600,3，实际测试中发现800,800,3效果更好
     #-------------------------------------------------------------------------------------#
-    input_shape = [800,800,3]
+    # input_shape = [800,800,3]
+    input_shape = [416, 416, 3]
     #----------------------------------------------------#
     #   使用到的主干特征提取网络
     #   vgg或者resnet50
     #----------------------------------------------------#
     backbone = "resnet50"
     model = FasterRCNN(NUM_CLASSES,backbone=backbone)
-    weights_init(model)
+    weights_init(model, init_type='kaiming')
+    # torch.save(model.state_dict(), 'logs/init.pth')
+
+
 
     # #------------------------------------------------------#
     #   权值文件请看README，百度网盘下载
     #------------------------------------------------------#
-    model_path = 'model_data/voc_weights_resnet.pth'
+    model_path = 'E:/PycharmProjects/faster-rcnn-pytorch/logs/Epoch600-Total_Loss0.6469-Val_Loss0.8842.pth'
     print('Loading weights into state dict...')
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model_dict = model.state_dict()
@@ -146,10 +151,10 @@ if __name__ == "__main__":
     #   提示OOM或者显存不足请调小Batch_size
     #------------------------------------------------------#
     if True:
-        lr              = 1e-4
+        lr              = 1e-3
         Batch_size      = 2
-        Init_Epoch      = 0
-        Freeze_Epoch    = 50
+        Init_Epoch      = 600
+        Freeze_Epoch    = 650
         
         optimizer       = optim.Adam(net.parameters(), lr, weight_decay=5e-4)
         lr_scheduler    = optim.lr_scheduler.StepLR(optimizer,step_size=1,gamma=0.95)
@@ -185,10 +190,10 @@ if __name__ == "__main__":
             lr_scheduler.step()
 
     if True:
-        lr              = 1e-5
+        lr              = 1e-4
         Batch_size      = 2
-        Freeze_Epoch    = 50
-        Unfreeze_Epoch  = 100
+        Freeze_Epoch    = 650
+        Unfreeze_Epoch  = 800
 
         optimizer       = optim.Adam(net.parameters(), lr, weight_decay=5e-4)
         lr_scheduler    = optim.lr_scheduler.StepLR(optimizer, step_size=1, gamma=0.95)
@@ -222,3 +227,6 @@ if __name__ == "__main__":
         for epoch in range(Freeze_Epoch,Unfreeze_Epoch):
             fit_ont_epoch(net,epoch,epoch_size,epoch_size_val,gen,gen_val,Unfreeze_Epoch,Cuda)
             lr_scheduler.step()
+    # model.prune_by_std()
+    # torch.save(model.state_dict(), 'logs/model_after_pruning.pth')
+

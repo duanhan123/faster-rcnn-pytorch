@@ -14,14 +14,18 @@ import os
 import random 
 random.seed(0)
 
-xmlfilepath=r'./VOCdevkit/VOC2007/Annotations'
-saveBasePath=r"./VOCdevkit/VOC2007/ImageSets/Main/"
+
+xmlfilepath='E:/PycharmProjects/faster-rcnn-pytorch/VOCdevkit/VOC2007/Annotations'
+saveBasePath="E:/PycharmProjects/faster-rcnn-pytorch/VOCdevkit/VOC2007/ImageSets/Main/"
+
+# xmlfilepath=r'./VOCdevkit/VOC2007/Annotations'
+# saveBasePath=r"./VOCdevkit/VOC2007/ImageSets/Main/"
  
 #----------------------------------------------------------------------#
 #   想要增加测试集修改trainval_percent
 #   train_percent不需要修改
 #----------------------------------------------------------------------#
-trainval_percent=1
+trainval_percent=0.9
 train_percent=1
 
 temp_xml = os.listdir(xmlfilepath)

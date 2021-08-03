@@ -1,11 +1,12 @@
 import math
 
 import torch.nn as nn
+from .prune import PruningModule, MaskedLinear
 
 
-class Bottleneck(nn.Module):
+class Bottleneck(PruningModule):
     expansion = 4
-    def __init__(self, inplanes, planes, stride=1, downsample=None):
+    def __init__(self, inplanes, planes, stride=1, downsample=None, mask=False):
         super(Bottleneck, self).__init__()
         self.conv1 = nn.Conv2d(inplanes, planes, kernel_size=1, stride=stride, bias=False)
         self.bn1 = nn.BatchNorm2d(planes)
@@ -41,8 +42,8 @@ class Bottleneck(nn.Module):
 
         return out
 
-class ResNet(nn.Module):
-    def __init__(self, block, layers, num_classes=1000):
+class ResNet(PruningModule):
+    def __init__(self, block, layers, num_classes=1000, mask=False):
         #-----------------------------------#
         #   假设输入进来的图片是600,600,3
         #-----------------------------------#
@@ -67,7 +68,8 @@ class ResNet(nn.Module):
         self.layer4 = self._make_layer(block, 512, layers[3], stride=2)
         
         self.avgpool = nn.AvgPool2d(7)
-        self.fc = nn.Linear(512 * block.expansion, num_classes)
+        linear = MaskedLinear if mask else nn.Linear
+        self.fc1 = linear(512 * block.expansion, num_classes)
 
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
@@ -107,11 +109,11 @@ class ResNet(nn.Module):
 
         x = self.avgpool(x)
         x = x.view(x.size(0), -1)
-        x = self.fc(x)
+        x = self.fc1(x)
         return x
 
-def resnet50():
-    model = ResNet(Bottleneck, [3, 4, 6, 3])
+def resnet50(mask=False):
+    model = ResNet(Bottleneck, [3, 4, 6, 3], mask=False)
     #----------------------------------------------------------------------------#
     #   获取特征提取部分，从conv1到model.layer3，最终获得一个38,38,1024的特征层
     #----------------------------------------------------------------------------#

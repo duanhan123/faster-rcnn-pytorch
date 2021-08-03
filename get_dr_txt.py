@@ -34,7 +34,7 @@ class mAP_FRCNN(FRCNN):
     #---------------------------------------------------#
     def detect_image(self,image_id,image):
         self.confidence = 0.01
-        self.iou        = 0.45
+        self.iou        = 0.3
         f = open("./input/detection-results/"+image_id+".txt","w") 
         #-------------------------------------#
         #   转换成RGB图片，可以用于灰度图预测。

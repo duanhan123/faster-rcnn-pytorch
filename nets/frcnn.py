@@ -4,15 +4,16 @@ from nets.classifier import Resnet50RoIHead, VGG16RoIHead
 from nets.resnet50 import resnet50
 from nets.rpn import RegionProposalNetwork
 from nets.vgg16 import decom_vgg16
+from .prune import PruningModule, MaskedLinear
 
 
-class FasterRCNN(nn.Module):
+class FasterRCNN(PruningModule):
     def __init__(self, num_classes, 
                     mode = "training",
                     feat_stride = 16,
                     anchor_scales = [8, 16, 32],
                     ratios = [0.5, 1, 2],
-                    backbone = 'vgg'):
+                    backbone = 'vgg', mask=False):
         super(FasterRCNN, self).__init__()
         self.feat_stride = feat_stride
         if backbone == 'vgg':
@@ -32,7 +33,7 @@ class FasterRCNN(nn.Module):
                 classifier=classifier
             )
         elif backbone == 'resnet50':
-            self.extractor, classifier = resnet50()
+            self.extractor, classifier = resnet50(mask)
 
             self.rpn = RegionProposalNetwork(
                 1024, 512,

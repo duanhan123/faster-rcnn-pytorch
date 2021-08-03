@@ -20,6 +20,8 @@ if __name__ == "__main__":
     #   'fps'表示测试fps
     #-------------------------------------------------------------------------#
     mode = "predict"
+    # mode = "video"
+
     #-------------------------------------------------------------------------#
     #   video_path用于指定视频的路径，当video_path=0时表示检测摄像头
     #   video_save_path表示视频保存的路径，当video_save_path=""时表示不保存
@@ -27,8 +29,8 @@ if __name__ == "__main__":
     #   video_path、video_save_path和video_fps仅在mode='video'时有效
     #   保存视频时需要ctrl+c退出才会完成完整的保存步骤，不可直接结束程序。
     #-------------------------------------------------------------------------#
-    video_path      = 0
-    video_save_path = ""
+    video_path      = "E:/PycharmProjects/faster-rcnn-pytorch/test/test.mp4"
+    video_save_path = "E:/PycharmProjects/faster-rcnn-pytorch/test/output/test_out.mp4"
     video_fps       = 25.0
 
     if mode == "predict":
@@ -44,8 +46,11 @@ if __name__ == "__main__":
         '''
         while True:
             img = input('Input image filename:')
+            if(img == 'q'):
+                print("End Process")
+                break
             try:
-                image = Image.open(img)
+                image = Image.open("img/" + img)
             except:
                 print('Open Error! Try again!')
                 continue

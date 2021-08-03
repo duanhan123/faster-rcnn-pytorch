@@ -20,8 +20,8 @@ from utils.utils import DecodeBox, get_new_img_size
 #--------------------------------------------#
 class FRCNN(object):
     _defaults = {
-        "model_path"    : 'model_data/voc_weights_resnet.pth',
-        "classes_path"  : 'model_data/voc_classes.txt',
+        "model_path"    : 'E:/PycharmProjects/faster-rcnn-pytorch/logs/Epoch600-Total_Loss0.6469-Val_Loss0.8842.pth',
+        "classes_path"  : 'E:/PycharmProjects/faster-rcnn-pytorch/model_data/new_classes.txt',
         "confidence"    : 0.5,
         "iou"           : 0.3,
         "backbone"      : "resnet50",
@@ -131,6 +131,7 @@ class FRCNN(object):
             #   如果没有检测出物体，返回原图
             #---------------------------------------------------------#
             if len(outputs)==0:
+                print("outputs == 0\n")
                 return old_image
             outputs = np.array(outputs)
             bbox = outputs[:,:4]

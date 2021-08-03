@@ -9,12 +9,12 @@ from utils.utils import loc2bbox
 
 
 class ProposalCreator():
-    def __init__(self, mode, nms_thresh=0.7,
+    def __init__(self, mode, nms_thresh=0.3,
                  n_train_pre_nms=12000,
                  n_train_post_nms=600,
                  n_test_pre_nms=3000,
                  n_test_post_nms=300,
-                 min_size=16):
+                 min_size=16):#thresh original 0.7
         self.mode = mode
         self.nms_thresh = nms_thresh
         self.n_train_pre_nms = n_train_pre_nms
